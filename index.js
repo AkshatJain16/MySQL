@@ -14,11 +14,11 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
-// app.use("/students",studentsRoutes);
+app.use("/students",studentsRoutes);
 // app.use("/buses",busRoutes);
 // app.use("/users", userRoutes);
 
-db.sync({force:true}).then(()=>{
+db.sync().then(()=>{
   app.listen(3000, (err)=>{
     console.log("Server is running");
   })
