@@ -17,8 +17,9 @@ connection.connect((err) => {
   const createStudentTable = `create table IF NOT EXISTS Students(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
-    email VARCHAR(255)
-  )`
+    email VARCHAR(255) UNIQUE,
+    age INT
+  )`;
   connection.execute(createStudentTable, (err) => {
     if (err) {
       console.error(err);
