@@ -1,36 +1,35 @@
-const e = require('express');
-const db = require('../utils/db-connection');
+const User = require('../models/users');
 
-const getAllUsers = (req,res)=>{
-    const selectAllQuery = `SELECT * FROM users`;
+//POST /users
+const addUser = async (req, res) => {
+    try {
+        const {name, email} = req.body;
 
-    db.execute(selectAllQuery, (err,result)=>{
-        if(err){
-            console.log(err.message);
-            res.status(500).send(err.message);
-            return;
-        }
-        res.status(200).send(result);
-    })
+        await User.create({
+            name: name,
+            email: email
+        });
+
+        res.status(201).send(`User with name ${name} is created`);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Unable to create user');
+    }
 };
 
-const addUser = (req,res)=>{
-    const {name, email} = req.body;
+//GET /users
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.findAll();
 
-    const addQuery = `INSERT INTO users (name, email) VALUES (?,?)`;
-
-    db.execute(addQuery, [name,email],(err)=>{
-        if(err){
-            console.log(err.message);
-            res.status(500).send(err.message);
-            return;
-        }
-        res.status(200).send("User has been added");
-    })
-
-}
+        res.status(200).send(users);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Unable to get users');
+    }
+};
 
 module.exports = {
-    getAllUsers,
-    addUser
-}
+    addUser,
+    getUsers
+};

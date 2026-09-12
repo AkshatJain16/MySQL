@@ -1,38 +1,49 @@
-const db = require('../utils/db-connection');
+const Bus = require('../models/buses');
 
-const getBus = (req,res)=>{
-    const {seats} = req.params;
-    const selectQuery = `SELECT * from buses WHERE availableSeats > ?`;
+//POST /buses
+const addBus = async (req, res) => {
+    try {
+        const {BusNumber, totalSeats, availableSeats} = req.body;
 
-    db.execute(selectQuery, [seats], (err,result)=>{
-        if(err){
-            console.log(err.message);
-            res.status(500).send(err.message);
-            return;
-        }
-        if(result.length === 0){
-            res.status(404).send("No bus found with the required available seats");
-            return;
-        }
-        res.status(200).send(result);
-    })
+        await Bus.create({
+            BusNumber: BusNumber,
+            totalSeats: totalSeats,
+            availableSeats: availableSeats
+        });
+
+        res.status(201).send(`Bus with number ${BusNumber} is created`);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
 };
 
-const addBus = (req,res)=>{
-    const {busNumber, totalSeats, availableSeats} = req.body;
-    const addQuery = `INSERT INTO buses (busNumber,totalSeats,availableSeats) VALUES(?,?,?)`;
+//GET /buses/available/:seats
+const getAvailableBuses = async (req, res) => {
+    try {
+        const {seats} = req.params;
 
-    db.execute(addQuery, [busNumber, totalSeats, availableSeats],(err)=>{
-        if(err){
-            console.log(err.message);
-            res.status(500).send(err.message);
+        const buses = await Bus.findAll({
+            where: {
+                availableSeats: {
+                    [require('sequelize').Op.gt]: seats
+                }
+            }
+        });
+
+        if (buses.length === 0) {
+            res.status(404).send('No buses found');
             return;
         }
-        res.status(200).send("Bus added successfully");
-    })
-}
+
+        res.status(200).send(buses);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
 
 module.exports = {
-    getBus,
-    addBus
-}
+    addBus,
+    getAvailableBuses
+};
