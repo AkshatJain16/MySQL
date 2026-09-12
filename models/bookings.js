@@ -11,6 +11,15 @@ const Bookings = sequelize.define('Bookings', {
     seatNumber:{
         type:DataTypes.INTEGER,
         allowNull:false
+    },
+    userId:{
+        type:DataTypes.INTEGER,
+        allowNull:false
+    },
+
+    busId:{
+        type:DataTypes.INTEGER,
+        allowNull:false
     }
 })
 

@@ -5,31 +5,30 @@ const addUser = async (req, res) => {
     try {
         const {name, email} = req.body;
 
-        await User.create({
+        const user = await User.create({
             name: name,
             email: email
         });
 
-        res.status(201).send(`User with name ${name} is created`);
+        res.status(201).json(user);
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Unable to create user');
+        res.status(500).json({error:error.message});
     }
 };
 
 //GET /users
-const getUsers = async (req, res) => {
-    try {
-        const users = await User.findAll();
+// const getUsers = async (req, res) => {
+//     try {
+//         const users = await User.findAll();
 
-        res.status(200).send(users);
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Unable to get users');
-    }
-};
+//         res.status(200).send(users);
+//     } catch (error) {
+//         console.log(error.message);
+//         res.status(500).send({error:error.message});
+//     }
+// };
 
 module.exports = {
     addUser,
-    getUsers
+    //getUsers
 };
